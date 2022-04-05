@@ -1,0 +1,52 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+        "Sid": "",
+        "Effect": "Allow",
+        "Action": [
+            "logs:PutLogEvents",
+            "logs:CreateLogStream",
+            "logs:CreateLogGroup"
+        ],
+        "Resource": [
+            "arn:aws:logs:${region}:${account_id}:log-group:/aws/codebuild/${name_prefix}-packer-site:*",
+            "arn:aws:logs:${region}:${account_id}:log-group:/aws/codebuild/${name_prefix}-packer-site"
+        ]
+    },
+    {
+        "Sid": "",
+        "Effect": "Allow",
+        "Action": "iam:PassRole",
+        "Resource": "*"
+    },
+    {
+        "Sid": "",
+        "Effect": "Allow",
+        "Action": [
+            "ecr:GetDownloadUrlForLayer",
+            "ecr:DescribeImages",
+            "ecr:BatchGetImage"
+        ],
+        "Resource": "arn:aws:ecr:${region}:${docker_account_id}:repository/packer-builder"
+    },
+    {
+        "Sid": "",
+        "Effect": "Allow",
+        "Action": "ecr:GetAuthorizationToken",
+        "Resource": "*"
+    },
+    {
+      "Effect":"Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "${codepipeline_bucket_arn}/*",
+        "${codepipeline_bucket_arn}"
+      ]
+    }
+  ]
+}

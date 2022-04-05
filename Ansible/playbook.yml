@@ -1,0 +1,20 @@
+---
+  # On applique le playbook ansible directement sur la machine
+- hosts: localhost
+  connection: local
+
+  # Récupération des variables
+  pre_tasks:
+    - name: "Load configuration"
+      include_vars:
+        file: ~/vars/common.yml
+
+  # Execution du role ansible galawy du module nginx de geerlingguy
+  roles:
+    - {role: geerlingguy.nginx, become: true}
+
+  # Execution de la configuration personnalisé
+  tasks:
+    - name: "Import common tasks"
+      import_tasks: ~/tasks/main.yml
+...

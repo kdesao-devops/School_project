@@ -1,0 +1,44 @@
+---
+- name: create folders for advoko
+  file:
+    state: directory
+    recurse: true
+    path: "{{ item }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+  with_items:
+    - "{{ pathtoadvoko }}"
+
+- name: Move /home/centos/advoko/* to /usr/share/nginx/html
+  shell: cp -r /home/centos/advoko/* /usr/share/nginx/html
+  become: true
+
+# intall common packages + docker yarn nodejs nginx
+- name: Set httpd_can_network_connect flag on and keep it persistent across reboots
+  seboolean:
+    name: httpd_can_network_connect
+    state: true
+    persistent: true
+  become: true
+
+- name: Install "{{ yum_needed_packages }}"
+  yum:
+    update_cache: true
+    state: present
+    allow_downgrade: true
+    name: "{{ yum_needed_packages }}"
+  become: true
+
+- name: Install Packages | pip
+  pip:
+    state: latest
+    name: "{{ pip_needed_packages }}"
+  become: true
+
+- name: set timezone to Europe/Paris
+  timezone:
+    name: Europe/Paris
+  become: true
+
+...

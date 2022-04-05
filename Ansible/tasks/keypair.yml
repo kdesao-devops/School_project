@@ -1,0 +1,29 @@
+---
+- name: create a new key pair
+  openssh_keypair:
+    path: "/home/centos/buildpacker/site-key"
+    state: "present"
+    type: rsa
+    comment: "site-key"
+  register: private_key
+
+- name: put the private key in SSM
+  aws_ssm_parameter_store:
+    name: "/{{ environnement }}/{{ application }}/site_private_key_awaiting"
+    description: "This is the ssh private key for the server site"
+    string_type: "SecureString"
+    value: "{{ lookup('file', private_key.filename ) }}"
+    region: eu-west-1
+
+- name: Set public key in the authorized key file
+  authorized_key:
+    user: centos
+    state: present
+    exclusive: true     #Remove the temp key of packer
+    key: "{{ private_key.public_key }}"
+
+- name: rm temp folders (~/buildpacker)
+  file:
+    state: absent
+    path: ~/buildpacker
+...

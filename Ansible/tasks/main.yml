@@ -1,0 +1,9 @@
+---
+
+# configure the various files
+- include_tasks: config.yml
+
+  # Generate ssh keypair and ssm update
+- include_tasks: keypair.yml
+
+...

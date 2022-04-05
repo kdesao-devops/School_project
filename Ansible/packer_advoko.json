@@ -1,0 +1,86 @@
+{
+  "variables": {
+    "environnement": "{{env `environment`}}",
+    "application": "{{env `application`}}",
+    "region": "{{env `region`}}",
+    "instance_type": "{{env `instance_type`}}",
+    "access": "{{env `access`}}",
+    "secret": "{{env `secret`}}"
+  },
+
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `access`}}",
+    "secret_key": "{{user `secret`}}",
+    "iam_instance_profile": "{{user `environnement`}}-{{user `application`}}-site-ec2",
+    "region": "{{user `region` }}",
+    "source_ami_filter": {
+      "filters": {
+        "product-code": "aw0evgkw8e5c1q413zgy5pjce"
+      },
+      "owners": "aws-marketplace",
+      "most_recent": true
+    },
+    "shutdown_behavior": "terminate",
+
+    "instance_type": "{{user `instance_type` }}",
+    "ssh_username": "centos",
+    "ami_name": "advoko-site {{timestamp}}",
+    "tags":
+    {
+      "Name": "advoko-site",
+      "Env": "{{user `environnement`}}",
+      "Application": "{{user `application`}}",
+      "Status": "PendingValidation"
+    }
+  }],
+
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "./vars",
+      "destination": "~/vars"
+    },
+    {
+      "type": "file",
+      "source": "./tasks",
+      "destination": "~/tasks"
+    },
+    {
+      "type": "file",
+      "source": "./advoko",
+      "destination": "~/advoko"
+    },
+    {
+      "type": "shell",
+      "inline":[
+        "sudo yum -y update",
+        "sudo yum install -y epel-release",
+        "sudo yum install -y ansible",
+        "sudo yum install -y python-pip",
+        "sudo pip install boto3"
+      ]
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "playbook.yml",
+      "galaxy_file": "requirements.yml",
+      "extra_arguments": [ "--extra-vars \"environnement={{user `environnement`}}\" --extra-vars \"application={{user `application`}}\" " ]
+    },
+    {
+      "type": "shell",
+      "inline":[
+        "rm -r ~/tasks/ ~/vars/ "
+      ]
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "output": "manifest.json",
+        "strip_path": true,
+        "type": "manifest"
+      }
+    ]
+  ]
+}
