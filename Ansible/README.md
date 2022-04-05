@@ -8,6 +8,8 @@ Finally Ansible install and configure all the packages to run advoko site.
 
 To make the CI all this is run in a docker (from the dockerfile) launch by CodeBuild.
 
+![Screenshot](architecture-packer.png)
+
 # Usage
 
 Pour utilisé ce module plusieurs conditions doivent etre réunies.

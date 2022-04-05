@@ -1,3 +1,7 @@
+## Description
+
+![Screenshot](pipeline-packer.png)
+
 ## Usage
 
 ### Use an existing environment
@@ -21,7 +25,7 @@ The tags, naming of resources and region will be deduced by the workspace name.
 
 1. Clone this github repository:
 ```
-$ git clone https://github.com/com:kdesao-devops/School_project.git
+$ git clone https://github.com/kdesao-devops/School_project.git
 $ cd workspaces-tf-advoko-deployment
 ```
 2. Run `terraform workspace new env-appname-region` (ex: staging-advoko-eu-west-1)
